@@ -18,6 +18,8 @@ struct MovieListScreen: View {
                 if viewModel.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if viewModel.movies.isEmpty && !searchText.isEmpty {
+                    NoResultsView(query: searchText)
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 16) {
@@ -28,6 +30,16 @@ struct MovieListScreen: View {
                                     MovieListingCard(movie: movie)
                                 }
                                 .buttonStyle(.plain)
+                                .onAppear {
+                                    Task {
+                                        await viewModel.loadMoreIfNeeded(currentItem: movie)
+                                    }
+                                }
+                            }
+
+                            if viewModel.isPaginating {
+                                ProgressView()
+                                    .padding()
                             }
                         }
                         .padding()
@@ -41,9 +53,9 @@ struct MovieListScreen: View {
                 prompt: "Search movies..."
             )
             .background(Color.backgroundPrimary)
-            .onChange(of: searchText) { newValue in
+            .onChange(of: searchText, { _, newValue in
                 viewModel.searchMovies(query: newValue)
-            }
+            })
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {

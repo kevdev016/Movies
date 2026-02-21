@@ -23,6 +23,11 @@ struct MovieDetail: Decodable {
         case voteAverage = "vote_average"
         case posterPath = "poster_path"
     }
+
+    var posterURL: URL? {
+        guard let posterPath else { return nil }
+        return URL(string: "\(APIConfig.imageBaseURL)/w500\(posterPath)")
+    }
 }
 
 struct Genre: Decodable {

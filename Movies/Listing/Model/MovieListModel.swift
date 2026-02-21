@@ -7,8 +7,16 @@
 
 import Foundation
 
-struct MovieResponse: Decodable {
+struct MovieResponse: Codable {
+    let page: Int
     let results: [Movie]
+    let totalPages: Int
+
+    enum CodingKeys: String, CodingKey {
+        case page
+        case results
+        case totalPages = "total_pages"
+    }
 }
 
 struct Movie: Identifiable, Codable, Hashable {
@@ -24,5 +32,10 @@ struct Movie: Identifiable, Codable, Hashable {
         case rating = "vote_average"
         case posterPath = "poster_path"
         case releaseDate = "release_date"
+    }
+
+    var posterURL: URL? {
+        guard let posterPath else { return nil }
+        return URL(string: "\(APIConfig.imageBaseURL)/w500\(posterPath)")
     }
 }
