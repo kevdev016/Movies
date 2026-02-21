@@ -33,7 +33,6 @@ struct MovieListingCard: View {
                             ProgressView()
                         }
                     }
-                    .frame(height: 220)
                     .clipped()
                     .cornerRadius(12)
                 }
