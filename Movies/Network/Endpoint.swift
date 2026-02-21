@@ -40,8 +40,8 @@ enum Endpoint: EndpointProtocol {
         case let .movieVideos(id):
             return "/movie/\(id)/videos"
 
-        case .search:
-            return "/search/movie"
+        case let .search(query, page):
+            return "/search/movie?query=\(query)&page=\(page)"
         }
     }
 
