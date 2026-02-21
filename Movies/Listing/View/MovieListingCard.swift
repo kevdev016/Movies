@@ -19,8 +19,8 @@ struct MovieListingCard: View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topTrailing) {
                 AsyncImage(
-                    url: movie.posterPath != nil
-                        ? URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath!)")
+                    url: movie.posterURL != nil
+                    ? movie.posterURL
                         : nil
                 ) { phase in
                     switch phase {
