@@ -18,6 +18,8 @@ struct MovieListScreen: View {
                 if viewModel.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if viewModel.movies.isEmpty && !searchText.isEmpty {
+                    NoResultsView(query: searchText)
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 16) {
