@@ -1,0 +1,64 @@
+//
+//  MovieListingViewModel.swift
+//  Movies
+//
+//  Created by Kevin Jeggy(UST, IN) on 21/02/26.
+//
+
+import Combine
+import Foundation
+
+@MainActor
+class MovieListingViewModel: ObservableObject {
+    @Published var movies: [Movie] = []
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+
+    private var currentSearchTask: Task<Void, Never>?
+
+    // MARK: - Trending
+
+    func fetchTrending() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let response: MovieResponse =
+                try await NetworkService.shared.request(.popular(page: 1))
+            movies = response.results
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: - Search
+
+    func searchMovies(query: String) {
+        currentSearchTask?.cancel()
+
+        currentSearchTask = Task {
+            try? await Task.sleep(nanoseconds: 500000000)
+
+            if Task.isCancelled { return }
+
+            if query.isEmpty {
+                await fetchTrending()
+                return
+            }
+
+            isLoading = true
+            defer { isLoading = false }
+
+            do {
+                let response: MovieResponse =
+                    try await NetworkService.shared.request(
+                        .search(query: query, page: 1)
+                    )
+
+                movies = response.results
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+}
