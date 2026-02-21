@@ -9,7 +9,7 @@ import AVKit
 import SwiftUI
 
 struct MovieDetailScreen: View {
-    let movieID: Int = 1236153
+    let movieID: Int
     @StateObject private var viewModel = MovieDetailViewModel()
 
     var body: some View {
