@@ -41,9 +41,9 @@ struct MovieListScreen: View {
                 prompt: "Search movies..."
             )
             .background(Color.backgroundPrimary)
-            .onChange(of: searchText) { newValue in
+            .onChange(of: searchText, { _, newValue in
                 viewModel.searchMovies(query: newValue)
-            }
+            })
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
