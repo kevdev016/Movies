@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MovieListScreen: View {
     @StateObject private var viewModel = MovieListingViewModel()
+    @State private var searchText = ""
 
     var body: some View {
         NavigationStack {
@@ -20,7 +21,6 @@ struct MovieListScreen: View {
                     ScrollView {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.movies) { movie in
-
                                 NavigationLink {
                                     MovieDetailScreen(movieID: movie.id)
                                 } label: {
@@ -33,7 +33,16 @@ struct MovieListScreen: View {
                     }
                 }
             }
-            .navigationTitle("Popular Movies")
+            .navigationTitle("Movies")
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search movies..."
+            )
+            .background(Color.backgroundPrimary)
+            .onChange(of: searchText) { newValue in
+                viewModel.searchMovies(query: newValue)
+            }
         }
         .task {
             await viewModel.fetchTrending()

@@ -33,7 +33,7 @@ struct MovieListingCard: View {
                 Text(movie.title)
                     .font(.headline)
                     .lineLimit(1)
-                
+
                 if let releaseDate = movie.releaseDate,
                    let year = releaseDate.split(separator: "-").first {
                     Text(String(year))
@@ -52,7 +52,7 @@ struct MovieListingCard: View {
             }
         }
         .padding(10)
-        .background(Color(.systemBackground))
+        .background(Color.backgroundSecondary)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
     }
