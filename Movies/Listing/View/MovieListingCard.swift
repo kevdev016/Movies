@@ -17,27 +17,48 @@ struct MovieListingCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-
             ZStack(alignment: .topTrailing) {
-
-                if let posterPath = movie.posterPath {
-                    AsyncImage(
-                        url: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
-                    ) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } placeholder: {
+                AsyncImage(
+                    url: movie.posterURL != nil
+                    ? movie.posterURL
+                        : nil
+                ) { phase in
+                    switch phase {
+                    case .empty:
                         ZStack {
                             Color.gray.opacity(0.2)
                             ProgressView()
                         }
+
+                    case let .success(image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+
+                    case .failure:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+
+                            VStack(spacing: 8) {
+                                Image(systemName: "film")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.gray)
+
+                                Text("No Image")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+
+                    @unknown default:
+                        EmptyView()
                     }
-                    .frame(height: 220)
-                    .clipped()
-                    .cornerRadius(12)
                 }
-                
+                .frame(minHeight: 220)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .cornerRadius(12)
+
                 Button {
                     favoritesManager.toggleFavorite(movie)
                 } label: {

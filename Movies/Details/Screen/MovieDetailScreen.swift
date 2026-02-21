@@ -22,17 +22,46 @@ struct MovieDetailScreen: View {
 
             if let movie = viewModel.movie {
                 VStack(alignment: .leading, spacing: 16) {
-                    if let posterPath = movie.posterPath {
-                        AsyncImage(
-                            url: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
-                        ) { image in
-                            image.resizable()
-                        } placeholder: {
-                            ProgressView()
+                    AsyncImage(
+                        url: movie.posterURL != nil
+                            ? movie.posterURL
+                            : nil
+                    ) { phase in
+                        switch phase {
+                        case .empty:
+                            ZStack {
+                                Color.gray.opacity(0.2)
+                                ProgressView()
+                            }
+
+                        case let .success(image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+
+                        case .failure:
+                            ZStack {
+                                Color.gray.opacity(0.2)
+
+                                VStack(spacing: 8) {
+                                    Image(systemName: "film")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(.gray)
+
+                                    Text("No Image Available")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
+                            }
+
+                        @unknown default:
+                            EmptyView()
                         }
-                        .aspectRatio(contentMode: .fit)
-                        .cornerRadius(12)
                     }
+                    .frame(minHeight: 350)
+                    .frame(maxWidth: .infinity)
+                    .clipped()
+                    .cornerRadius(12)
 
                     Text(movie.title)
                         .font(.title)
@@ -87,7 +116,7 @@ struct MovieDetailScreen: View {
         }
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
-        
+
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
