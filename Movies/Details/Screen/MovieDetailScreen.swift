@@ -9,8 +9,9 @@ import AVKit
 import SwiftUI
 
 struct MovieDetailScreen: View {
-    let movieID: Int
+    let movie: Movie
     @StateObject private var viewModel = MovieDetailViewModel()
+    @EnvironmentObject var favoritesManager: FavoritesManager
 
     var body: some View {
         ScrollView {
@@ -86,8 +87,20 @@ struct MovieDetailScreen: View {
         }
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
+        
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    favoritesManager.toggleFavorite(movie)
+                } label: {
+                    Image(systemName: favoritesManager.isFavorite(movie) ? "heart.fill" : "heart")
+                        .foregroundColor(.red)
+                }
+            }
+        }
+
         .task {
-            await viewModel.fetchDetails(movieID: movieID)
+            await viewModel.fetchDetails(movieID: movie.id)
         }
     }
 }

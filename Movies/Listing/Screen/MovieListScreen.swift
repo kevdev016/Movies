@@ -10,6 +10,7 @@ import SwiftUI
 struct MovieListScreen: View {
     @StateObject private var viewModel = MovieListingViewModel()
     @State private var searchText = ""
+    @EnvironmentObject var favoritesManager: FavoritesManager
 
     var body: some View {
         NavigationStack {
@@ -22,7 +23,7 @@ struct MovieListScreen: View {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.movies) { movie in
                                 NavigationLink {
-                                    MovieDetailScreen(movieID: movie.id)
+                                    MovieDetailScreen(movie: movie)
                                 } label: {
                                     MovieListingCard(movie: movie)
                                 }
@@ -42,6 +43,16 @@ struct MovieListScreen: View {
             .background(Color.backgroundPrimary)
             .onChange(of: searchText) { newValue in
                 viewModel.searchMovies(query: newValue)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        FavoritesScreen()
+                    } label: {
+                        Image(systemName: favoritesManager.favorites.isEmpty ? "heart" : "heart.fill")
+                            .foregroundColor(.red)
+                    }
+                }
             }
         }
         .task {
