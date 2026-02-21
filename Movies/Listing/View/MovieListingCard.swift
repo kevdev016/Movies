@@ -9,24 +9,45 @@ import SwiftUI
 
 struct MovieListingCard: View {
     let movie: Movie
+    @EnvironmentObject var favoritesManager: FavoritesManager
+
+    var isFavorite: Bool {
+        favoritesManager.isFavorite(movie)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            if let posterPath = movie.posterPath {
-                AsyncImage(
-                    url: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
-                ) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    ZStack {
-                        Color.gray.opacity(0.2)
-                        ProgressView()
+
+            ZStack(alignment: .topTrailing) {
+
+                if let posterPath = movie.posterPath {
+                    AsyncImage(
+                        url: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
+                    ) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                            ProgressView()
+                        }
                     }
+                    .frame(height: 220)
+                    .clipped()
+                    .cornerRadius(12)
                 }
-                .clipped()
-                .cornerRadius(12)
+                
+                Button {
+                    favoritesManager.toggleFavorite(movie)
+                } label: {
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .foregroundColor(isFavorite ? .red : .white)
+                        .padding(8)
+                        .background(Color.black.opacity(0.6))
+                        .clipShape(Circle())
+                }
+                .padding(8)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -40,6 +61,7 @@ struct MovieListingCard: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
+
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
                         .foregroundColor(.yellow)
