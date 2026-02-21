@@ -30,6 +30,16 @@ struct MovieListScreen: View {
                                     MovieListingCard(movie: movie)
                                 }
                                 .buttonStyle(.plain)
+                                .onAppear {
+                                    Task {
+                                        await viewModel.loadMoreIfNeeded(currentItem: movie)
+                                    }
+                                }
+                            }
+
+                            if viewModel.isPaginating {
+                                ProgressView()
+                                    .padding()
                             }
                         }
                         .padding()
