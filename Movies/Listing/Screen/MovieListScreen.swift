@@ -5,22 +5,35 @@
 //  Created by Kevin Jeggy(UST, IN) on 21/02/26.
 //
 
-import Foundation
 import SwiftUI
 
 struct MovieListScreen: View {
     @StateObject private var viewModel = MovieListingViewModel()
 
     var body: some View {
-        NavigationView {
-            if viewModel.isLoading {
-                ProgressView()
-            } else {
-                List(viewModel.movies) { movie in
-                    Text(movie.title)
+        NavigationStack {
+            Group {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(viewModel.movies) { movie in
+
+                                NavigationLink {
+                                    MovieDetailScreen(movieID: movie.id)
+                                } label: {
+                                    MovieListingCard(movie: movie)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding()
+                    }
                 }
-                .navigationTitle("Trending")
             }
+            .navigationTitle("Popular Movies")
         }
         .task {
             await viewModel.fetchTrending()
