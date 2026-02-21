@@ -58,7 +58,7 @@ Favorites are stored locally only.
 
 Popular API does not provide duration (not shown on home list).
 
-Cast data not implemented (requires /credits endpoint).
+Cast data not implemented (Details Screen API does not provide cast details).
 
 YouTube embed playback may fail due to recent embed restrictions.
 
